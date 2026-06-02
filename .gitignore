@@ -1,0 +1,8 @@
+# Local Netlify folder
+.netlify
+
+# macOS local metadata
+.DS_Store
+
+# Local backup copies
+script_副本.js
