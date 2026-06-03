@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LifeOS 生活方式引擎</title>
+    <link rel="stylesheet" href="./styles.css?v=2026060206" />
+  </head>
+  <body class="auth-locked">
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+
+    <section class="access-gate" id="accessGate" aria-label="访问密码">
+      <form class="access-card" id="accessForm">
+        <p class="eyebrow">Private Demo</p>
+        <h1>LifeOS 访问验证</h1>
+        <p>请输入访问密码后查看产品 demo。</p>
+        <label for="accessPassword">访问密码</label>
+        <input id="accessPassword" type="password" autocomplete="current-password" placeholder="输入密码" />
+        <button class="primary-action full" type="submit">进入 demo</button>
+        <span class="access-error" id="accessError" aria-live="polite"></span>
+      </form>
+    </section>
+
+    <main class="app-shell">
+      <aside class="rail" aria-label="产品导航">
+        <div class="brand">
+          <span class="brand-mark">L</span>
+          <div>
+            <strong>LifeOS</strong>
+            <span>生活方式引擎</span>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" aria-label="主导航">
+          <button class="nav-tab active" data-view="community" type="button">社区</button>
+          <button class="nav-tab" data-view="studio" type="button">AI 创作</button>
+          <button class="nav-tab" data-view="shop" type="button">商城</button>
+          <button class="nav-tab" data-view="profile" type="button">个人主页</button>
+        </nav>
+      </aside>
+
+      <section class="stage">
+        <section class="view active" id="community" aria-label="社区">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Community Feed</p>
+              <h2>AI 标注生活方式流</h2>
+            </div>
+            <form class="semantic-search" id="semanticSearchForm" role="search">
+              <label for="semanticSearchInput">AI 语义搜索</label>
+              <div class="semantic-search-box">
+                <input
+                  id="semanticSearchInput"
+                  type="search"
+                  autocomplete="off"
+                  placeholder="帮我寻找带5岁孩子去露营的商品方案"
+                />
+                <button class="voice-search-button" data-voice-search type="button">语音</button>
+                <button class="semantic-submit" type="submit">搜索</button>
+              </div>
+              <span id="semanticSearchStatus" aria-live="polite"></span>
+            </form>
+          </div>
+          <div class="feed-grid" id="feedGrid"></div>
+        </section>
+
+        <section class="view" id="studio" aria-label="AI 创作">
+          <div class="studio-grid">
+            <form class="creator" id="creatorForm">
+              <p class="eyebrow">AI Creator</p>
+              <h2>从灵感碎片生成可发布内容</h2>
+              <p class="creator-intro">
+                随手记录的文本、语音、图片和视频会被 AI 理解成素材记忆。选择多个碎片，再输入主题，AI 会组合成图文或视频草稿，并主动匹配商城同款商品。
+              </p>
+
+              <div class="creator-block">
+                <div class="creator-block-head">
+                  <strong>灵感碎片</strong>
+                  <span>已预选 3 个减脂素材</span>
+                </div>
+                <div class="inspiration-grid" id="inspirationGrid" aria-label="可选择的多模态灵感碎片">
+                  <button class="fragment-card selected text-fragment" type="button" data-fragment-id="weight-text" aria-pressed="true">
+                    <span class="fragment-type">文本</span>
+                    <strong>20260501 减重1kg</strong>
+                    <em>体重记录 / 阶段变化</em>
+                  </button>
+                  <button class="fragment-card selected image-fragment" type="button" data-fragment-id="salad-image" aria-pressed="true">
+                    <img class="fragment-cover" src="./assets/fragment-salad.svg" alt="轻食沙拉晚餐图片" />
+                    <span class="fragment-type">图片</span>
+                    <strong>轻食沙拉晚餐</strong>
+                    <em>高蛋白 / 低负担</em>
+                  </button>
+                  <button class="fragment-card selected video-fragment" type="button" data-fragment-id="workout-video" aria-pressed="true">
+                    <img class="fragment-cover" src="./assets/fragment-workout-cover.svg" alt="女生居家运动视频封面" />
+                    <span class="video-play-icon" aria-hidden="true"></span>
+                    <span class="fragment-type">视频</span>
+                    <strong>在家做运动视频</strong>
+                    <em>核心训练 / 出汗记录</em>
+                  </button>
+                  <button class="fragment-card audio-fragment" type="button" data-fragment-id="voice-note" aria-pressed="false">
+                    <span class="voice-icon" aria-hidden="true">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </span>
+                    <span class="fragment-type">语音</span>
+                    <strong>语音：别太硬核</strong>
+                    <em>口播灵感 / 松弛表达</em>
+                  </button>
+                </div>
+              </div>
+
+              <label>
+                整体主题 / 场景
+                <textarea id="promptText" rows="3">我的一周减脂生活</textarea>
+              </label>
+
+              <fieldset class="output-choice">
+                <legend>生成形式</legend>
+                <label>
+                  <input type="radio" name="outputType" value="图文" checked />
+                  <span>图文</span>
+                </label>
+                <label>
+                  <input type="radio" name="outputType" value="视频" />
+                  <span>视频</span>
+                </label>
+              </fieldset>
+
+              <button class="primary-action full" type="submit">生成 AI 内容包</button>
+            </form>
+
+            <article class="ai-output" id="aiOutput">
+              <p class="eyebrow">Generated Package</p>
+              <h2>等待组合灵感碎片</h2>
+              <p class="muted">选择碎片并生成后，这里会出现可发布草稿、商品绿点、同款链接和可编辑描述。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="shop" aria-label="商城">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Shoppable Layer</p>
+              <h2>从内容进入交易</h2>
+            </div>
+            <form class="semantic-search shop-semantic-search" id="shopSearchForm" role="search">
+              <label for="shopSearchInput">AI 商品语义搜索</label>
+              <div class="semantic-search-box">
+                <input
+                  id="shopSearchInput"
+                  type="search"
+                  autocomplete="off"
+                  placeholder="帮我寻找带5岁孩子去露营的商品方案"
+                />
+                <button class="voice-search-button" data-shop-voice-search type="button">语音</button>
+                <button class="semantic-submit" type="submit">搜索</button>
+              </div>
+              <span id="shopSearchStatus" aria-live="polite"></span>
+            </form>
+          </div>
+          <div class="shop-grid" id="shopGrid"></div>
+        </section>
+
+        <section class="view" id="profile" aria-label="个人主页">
+          <div class="profile-hero">
+            <div class="profile-identity">
+              <div class="avatar">
+                <img src="./assets/Gabi.jpeg" alt="策策头像" />
+              </div>
+              <span>北京 · Tesla Model Y 🚗</span>
+            </div>
+            <div class="profile-copy">
+              <p class="eyebrow">Creator Profile</p>
+              <h2>策策的智能生活方式档案</h2>
+              <p class="persona-memory">
+                AI 记忆：90 后大厂产品经理，常住北京，日常通勤驾驶特斯拉 Model Y。偏爱松弛感生活，近期深度迷上露营与跑山，常拍摄露营 Vlog 分享户外日常；闲暇喜欢低度果酒、精酿啤酒，也会浏览好物、点赞优质评论并留下真实评价。
+              </p>
+              <div class="persona-chips" aria-label="Gabi画像标签">
+                <span class="persona-chip">🏕️ 露营 Vlog</span>
+                <span class="persona-chip">🍹 低度果酒</span>
+                <span class="persona-chip">💬 爱互动评论</span>
+                <span class="persona-chip">👯 闺蜜结伴出行</span>
+              </div>
+            </div>
+          </div>
+          <div class="profile-dashboard">
+            <section class="profile-module profile-content-module">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">My Content</p>
+                  <h3>我的内容</h3>
+                </div>
+                <div class="mini-tabs" role="tablist" aria-label="我的内容分类">
+                  <button class="active" data-profile-subtab="published" type="button">我的发布</button>
+                  <button data-profile-subtab="saved" type="button">我的收藏</button>
+                </div>
+              </div>
+              <div class="content-panel active" data-profile-panel="published">
+                <article class="content-cover large" style="--cover-image: url('./assets/做饭.png')">
+                  <span>图文</span>
+                  <strong>我的露营餐具分享</strong>
+                </article>
+                <article class="content-cover" style="--cover-image: url('./assets/scene-desk.png')">
+                  <span>视频</span>
+                  <strong>下班后的高能量工作台</strong>
+                </article>
+                <article class="content-cover" style="--cover-image: url('./assets/scene-room.png')">
+                  <span>图文</span>
+                  <strong>客厅里的智能小宇宙</strong>
+                </article>
+              </div>
+              <div class="content-panel" data-profile-panel="saved">
+                <article class="content-cover large" style="--cover-image: url('./assets/scene-family-camp-lounge.png')">
+                  <span>收藏</span>
+                  <strong>孩子能安静待住的小客厅</strong>
+                </article>
+                <article class="content-cover" style="--cover-image: url('./assets/玩具.png')">
+                  <span>清单</span>
+                  <strong>亲子露营随身 EDC</strong>
+                </article>
+                <article class="content-cover" style="--cover-image: url('./assets/scene-edc.png')">
+                  <span>灵感</span>
+                  <strong>通勤男士的口袋系统</strong>
+                </article>
+              </div>
+            </section>
+
+            <section class="profile-module profile-commerce-module">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">Creator Commerce</p>
+                  <h3>我的带货</h3>
+                </div>
+                <div class="commerce-stats">
+                  <span><strong>218</strong> 带货成功</span>
+                  <span><strong>￥12,680</strong> 现金收益</span>
+                </div>
+              </div>
+              <div class="commerce-list">
+                <article><strong>便携餐具套装</strong><span>推荐 6 次 / 成交 48 单</span><em>￥1,920</em></article>
+                <article><strong>折叠锅具</strong><span>推荐 4 次 / 成交 31 单</span><em>￥2,356</em></article>
+                <article><strong>屏幕灯</strong><span>推荐 8 次 / 成交 57 单</span><em>￥3,249</em></article>
+                <article><strong>居家运动垫</strong><span>推荐 3 次 / 成交 22 单</span><em>￥880</em></article>
+              </div>
+            </section>
+
+            <section class="profile-module profile-circle-module">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">My Circles</p>
+                  <h3>我的圈子</h3>
+                </div>
+                <span class="module-note">点击圈子进入群聊</span>
+              </div>
+              <div class="circle-grid">
+                <button class="circle-card active" data-circle-room="camping" type="button" style="--cover-image: url('./assets/scene-family-camp-lounge.png')">
+                  <strong>北京周末露营局</strong>
+                  <span>3,284 人正在聊</span>
+                </button>
+                <button class="circle-card" data-circle-room="tesla" type="button" style="--cover-image: url('./assets/scene-car.png')">
+                  <strong>Model Y 车主生活</strong>
+                  <span>1,906 人正在聊</span>
+                </button>
+                <button class="circle-card" data-circle-room="fitness" type="button" style="--cover-image: url('./assets/fragment-workout-cover.svg')">
+                  <strong>低压减脂搭子群</strong>
+                  <span>826 人正在聊</span>
+                </button>
+              </div>
+              <div class="circle-chat" id="circleChat" aria-live="polite">
+                <div class="chat-title">北京周末露营局</div>
+                <p><strong>小满：</strong>周六怀柔营地还有两个车位，适合带小朋友。</p>
+                <p><strong>策策：</strong>我想带餐具和小锅，顺便拍一篇露营做饭笔记。</p>
+                <p><strong>Nico：</strong>求餐具链接，轻一点最好。</p>
+              </div>
+            </section>
+
+            <section class="profile-module profile-orders-module">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">Orders</p>
+                  <h3>我的订单</h3>
+                </div>
+                <span class="module-note">最近购买</span>
+              </div>
+              <div class="order-list">
+                <article><span>已签收</span><strong>便携餐具套装</strong><em>￥89 · 北京朝阳</em></article>
+                <article><span>配送中</span><strong>低糖气泡水 12 瓶</strong><em>￥58 · 明天到达</em></article>
+                <article><span>待评价</span><strong>居家运动垫</strong><em>￥159 · 已完成</em></article>
+              </div>
+            </section>
+
+            <section class="profile-module profile-space-module">
+              <div class="module-head">
+                <div>
+                  <p class="eyebrow">My Spaces</p>
+                  <h3>我的空间</h3>
+                </div>
+                <div class="mini-tabs" role="tablist" aria-label="我的空间分类">
+                  <button class="active" data-space-tab="home" type="button">家空间</button>
+                  <button data-space-tab="car" type="button">车空间</button>
+                  <button data-space-tab="desk" type="button">桌空间</button>
+                </div>
+              </div>
+              <div class="profile-space-panel active" data-space-panel="home">
+                <div class="space-board" style="--cover-image: url('./assets/家空间.jpeg')">
+                  <span style="--x:18%; --y:28%">落地灯</span>
+                  <span style="--x:64%; --y:42%">花瓶</span>
+                  <span style="--x:74%; --y:24%">装饰画</span>
+                </div>
+                <div class="space-palette"><button>换沙发</button><button>加绿植</button><button>换灯光</button></div>
+              </div>
+              <div class="profile-space-panel" data-space-panel="car">
+                <div class="space-board" style="--cover-image: url('./assets/车空间.jpeg')">
+                  <span style="--x:52%; --y:44%">手机支架</span>
+                  <span style="--x:70%; --y:66%">应急电源</span>
+                  <span style="--x:82%; --y:36%">香氛</span>
+                </div>
+                <div class="space-palette"><button>换香氛</button><button>加收纳</button><button>调氛围灯</button></div>
+              </div>
+              <div class="profile-space-panel" data-space-panel="desk">
+                <div class="space-board" style="--cover-image: url('./assets/桌空间.jpeg')">
+                  <span style="--x:72%; --y:22%">屏幕灯</span>
+                  <span style="--x:42%; --y:70%">键盘</span>
+                  <span style="--x:54%; --y:60%">音响</span>
+                </div>
+                <div class="space-palette"><button>换键帽</button><button>加音响</button><button>调高度</button></div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </section>
+
+      <aside class="inspector" id="inspector" aria-label="内容详情">
+        <p class="eyebrow">Immersive Explorer</p>
+        <h2>点击一张内容卡</h2>
+        <p class="muted">这里会展示沉浸式浏览、AI 商品识别、替代推荐和评论互动。</p>
+      </aside>
+    </main>
+
+    <section class="immersive-overlay" id="immersiveOverlay" aria-hidden="true">
+      <div class="immersive-space-shell" role="dialog" aria-modal="true" aria-label="沉浸式 3D 空间">
+        <button class="immersive-close" data-immersive-close type="button">退出空间</button>
+        <div class="immersive-space-hud">
+          <p class="eyebrow" id="immersiveMeta">Immersive Space</p>
+          <h2 id="immersiveTitle">场景空间</h2>
+          <span id="immersivePosition">位置 0 / 视角 0</span>
+        </div>
+        <div class="immersive-viewport" id="immersiveViewport" tabindex="0">
+          <div class="space-world" id="immersiveWorld"></div>
+        </div>
+        <div class="immersive-control-dock" id="immersiveControls" aria-label="空间移动控制"></div>
+      </div>
+    </section>
+
+    <script type="module" src="./script.js?v=2026060206"></script>
+  </body>
+</html>
