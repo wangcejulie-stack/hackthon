@@ -543,6 +543,7 @@ const immersiveCamera = {
 
 let activeInspectorScene = null;
 let shopRendered = false;
+let activeShopSearchMode = "solution";
 
 function product(name, price, detail) {
   return {
@@ -626,6 +627,98 @@ export function semanticSearchProducts(query) {
     .filter((entry) => entry.score > 0)
     .slice(0, 8)
     .map((entry) => entry.item);
+}
+
+export function buildShopSolution(query) {
+  const normalized = query.trim() || "帮我寻找带5岁孩子去露营的商品方案";
+  const isFamilyCamping = /孩子|儿童|亲子|5岁|五岁|宝宝|露营|营地|户外/.test(normalized);
+  const isFitness = /减脂|减重|轻食|运动|健身/.test(normalized);
+  const isDesk = /桌搭|办公|游戏|效率|电脑/.test(normalized);
+
+  if (isFitness) {
+    return {
+      query: normalized,
+      title: "一周减脂生活商品方案",
+      sceneTags: ["减脂", "轻食", "居家运动", "低糖替代"],
+      understanding:
+        "AI 把需求理解为：降低饮食负担、保留饱腹感、让运动更容易坚持，同时让内容素材更适合发布。",
+      essentials: [
+        solutionEssential("蛋白沙拉", "解决晚餐高蛋白和低负担，适合直接作为图文主素材。"),
+        solutionEssential("居家运动垫", "让核心训练、拉伸和低冲击运动有固定场景，降低开始成本。"),
+        solutionEssential("低糖气泡水", "替代高糖饮料，保留轻松感，适合减脂期继续坚持。"),
+      ],
+      bundles: [
+        solutionBundle("预算版", "先把饮食替换和基础运动跑起来", ["蛋白沙拉", "低糖气泡水"], "￥61"),
+        solutionBundle("品质版", "饮食、训练、记录一起升级", ["蛋白沙拉", "居家运动垫", "低糖气泡水"], "￥220"),
+        solutionBundle("轻量版", "适合只想先做轻负担改变的人", ["低糖气泡水", "蛋白沙拉"], "￥61"),
+      ],
+    };
+  }
+
+  if (isDesk) {
+    return {
+      query: normalized,
+      title: "高能量桌搭工作方案",
+      sceneTags: ["效率", "照明", "输入", "沉浸感"],
+      understanding:
+        "AI 把需求理解为：减少桌面疲劳、提升输入效率、补足夜间氛围，并让工作和娱乐都更稳定。",
+      essentials: [
+        solutionEssential("屏幕灯", "减少桌面阴影和屏幕反光，夜间办公更舒服。"),
+        solutionEssential("机械键盘", "提升高频输入手感，是桌面效率的核心触点。"),
+        solutionEssential("桌面音响", "补足视频、游戏和背景音乐的沉浸感。"),
+        solutionEssential("自动升降桌", "久坐和站立切换，让桌搭更适合长期使用。"),
+      ],
+      bundles: [
+        solutionBundle("预算版", "先解决照明和输入", ["屏幕灯", "机械键盘"], "￥968"),
+        solutionBundle("品质版", "完整升级桌面工作半径", ["自动升降桌", "屏幕灯", "机械键盘", "桌面音响"], "￥3066"),
+        solutionBundle("轻量版", "不大改桌面，只提升高频体验", ["屏幕灯", "桌面音响"], "￥768"),
+      ],
+    };
+  }
+
+  return {
+    query: normalized,
+    title: isFamilyCamping ? "亲子露营一站式购买方案" : "AI 生活场景购买方案",
+    sceneTags: ["亲子", "安全", "收纳", "补能", "做饭"],
+    understanding:
+      "AI 把需求理解为：带孩子出门不只是买装备，而是要同时解决安全边界、车内取放、营地补能和吃饭这几个高频问题。",
+    essentials: [
+      solutionEssential("便携餐具套装", "孩子能独立取用，吃饭不用临时翻找，也减少一次性用品。"),
+      solutionEssential("折叠锅具", "营地做饭和热食的核心装备，收纳后不占后备箱。"),
+      solutionEssential("保温杯", "给孩子和大人准备热水，清晨、夜间和长途路上都更稳。"),
+      solutionEssential("露营调料盒", "把盐、胡椒、小包酱料集中收纳，做饭桌面不混乱。"),
+      solutionEssential("应急电源", "给手机、露营灯和小设备补能，降低户外焦虑。"),
+    ],
+    bundles: [
+      solutionBundle("预算版", "优先覆盖吃饭和基础补能", ["便携餐具套装", "折叠锅具", "保温杯"], "￥457"),
+      solutionBundle(
+        "品质版",
+        "一次配齐亲子露营的餐厨、补能和车内收纳",
+        ["便携餐具套装", "折叠锅具", "保温杯", "露营调料盒", "应急电源", "车把手挂钩"],
+        "￥954",
+      ),
+      solutionBundle("轻量版", "适合轻装短途，不增加太多负重", ["便携餐具套装", "露营调料盒", "车把手挂钩"], "￥187"),
+    ],
+  };
+}
+
+function solutionEssential(name, reason) {
+  const productItem = getProductByName(name);
+  return {
+    name,
+    reason,
+    price: productItem?.price ?? "￥199",
+    category: productItem?.category ?? "AI 推荐",
+  };
+}
+
+function solutionBundle(name, strategy, products, total) {
+  return {
+    name,
+    strategy,
+    products: products.map((productName) => solutionEssential(productName, getProductByName(productName)?.detail ?? "适合当前场景的可购买单品。")),
+    total,
+  };
 }
 
 export function resolveSemanticQuery(value, fallback = "") {
@@ -1161,6 +1254,76 @@ function renderShopProductResults(results, query) {
         )
         .join("")}
     </div>
+  `;
+}
+
+function renderShopSolutionResults(solution) {
+  const shopGrid = document.querySelector("#shopGrid");
+  if (!shopGrid) return;
+  shopRendered = true;
+
+  shopGrid.innerHTML = `
+    <article class="shop-search-summary shop-solution-summary">
+      <p class="eyebrow">AI Solution Search</p>
+      <h3>${solution.title}</h3>
+      <p>「${solution.query}」已被拆解为可购买的场景方案，先解释为什么需要，再给出不同预算和偏好的成套组合。</p>
+      <div class="solution-chip-row">
+        ${solution.sceneTags.map((tag) => `<span>${tag}</span>`).join("")}
+      </div>
+    </article>
+    <section class="shop-solution-panel scene-understanding">
+      <p class="eyebrow">01 场景理解</p>
+      <h3>${solution.sceneTags.join(" / ")}</h3>
+      <p>${solution.understanding}</p>
+    </section>
+    <section class="shop-solution-panel essentials-panel">
+      <p class="eyebrow">02 必备清单</p>
+      <div class="essential-list">
+        ${solution.essentials
+          .map(
+            (item) => `
+              <article class="essential-item" data-shop-product="${item.name}" tabindex="0" role="button" aria-label="查看${item.name}商品详情">
+                <div>
+                  <strong>${item.name}</strong>
+                  <span>${item.reason}</span>
+                </div>
+                <em>${item.price}</em>
+              </article>
+            `,
+          )
+          .join("")}
+      </div>
+    </section>
+    <section class="shop-solution-panel bundle-panel">
+      <p class="eyebrow">03 成套购买方案</p>
+      <div class="solution-bundles">
+        ${solution.bundles
+          .map(
+            (bundle) => `
+              <article class="solution-bundle-card">
+                <div class="bundle-head">
+                  <strong>${bundle.name}</strong>
+                  <em>${bundle.total}</em>
+                </div>
+                <p>${bundle.strategy}</p>
+                <div class="bundle-products">
+                  ${bundle.products
+                    .map(
+                      (item) => `
+                        <button type="button" data-shop-product="${item.name}" aria-label="查看${item.name}商品详情">
+                          <span>${item.name}</span>
+                          <em>${item.price}</em>
+                        </button>
+                      `,
+                    )
+                    .join("")}
+                </div>
+              </article>
+            `,
+          )
+          .join("")}
+      </div>
+    </section>
   `;
 }
 
@@ -1729,7 +1892,27 @@ function bindShopSearch() {
   const input = document.querySelector("#shopSearchInput");
   const status = document.querySelector("#shopSearchStatus");
   const voiceButton = document.querySelector("[data-shop-voice-search]");
+  const modeButtons = document.querySelectorAll("[data-shop-search-mode]");
   if (!form || !input) return;
+
+  const setMode = (mode) => {
+    activeShopSearchMode = mode === "item" ? "item" : "solution";
+    modeButtons.forEach((button) => {
+      button.classList.toggle("active", button.dataset.shopSearchMode === activeShopSearchMode);
+    });
+    if (status) {
+      status.textContent =
+        activeShopSearchMode === "item"
+          ? "当前模式：搜单品，会展示不同品牌和 SKU。"
+          : "当前模式：搜方案，会生成结构化购买方案。";
+    }
+  };
+
+  modeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setMode(button.dataset.shopSearchMode);
+    });
+  });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -1741,9 +1924,15 @@ function bindShopSearch() {
     }
 
     input.value = query;
-    const results = semanticSearchProducts(query);
-    renderShopProductResults(results, query);
-    if (status) status.textContent = `AI 已找到 ${results.length} 个相关商品`;
+    if (activeShopSearchMode === "item") {
+      const results = semanticSearchProducts(query);
+      renderShopProductResults(results, query);
+      if (status) status.textContent = `AI 已找到 ${results.length} 个相关单品 SKU`;
+      return;
+    }
+
+    renderShopSolutionResults(buildShopSolution(query));
+    if (status) status.textContent = "AI 已生成 1 套结构化商品方案";
   });
 
   voiceButton?.addEventListener("click", () => {
@@ -1866,16 +2055,27 @@ function openSemanticSearchFromUrl() {
 function openShopSearchFromUrl() {
   if (typeof window === "undefined") return;
 
-  const query = new URLSearchParams(window.location.search).get("shopSearch");
+  const params = new URLSearchParams(window.location.search);
+  const query = params.get("shopSearch");
   if (!query) return;
 
   activateView("shop");
+  activeShopSearchMode = params.get("shopSearchMode") === "item" ? "item" : "solution";
+  document.querySelectorAll("[data-shop-search-mode]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.shopSearchMode === activeShopSearchMode);
+  });
   const input = document.querySelector("#shopSearchInput");
   const status = document.querySelector("#shopSearchStatus");
-  const results = semanticSearchProducts(query);
   if (input) input.value = query;
-  renderShopProductResults(results, query);
-  if (status) status.textContent = `AI 已找到 ${results.length} 个相关商品`;
+  if (activeShopSearchMode === "item") {
+    const results = semanticSearchProducts(query);
+    renderShopProductResults(results, query);
+    if (status) status.textContent = `AI 已找到 ${results.length} 个相关单品 SKU`;
+    return;
+  }
+
+  renderShopSolutionResults(buildShopSolution(query));
+  if (status) status.textContent = "AI 已生成 1 套结构化商品方案";
 }
 
 function init() {
