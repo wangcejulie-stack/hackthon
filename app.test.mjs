@@ -9,9 +9,11 @@ import {
   generateContentFromFragments,
   getProductByName,
   getShopCategories,
+  buildShopSolution,
   resolveSemanticQuery,
   semanticSearchNotes,
   semanticSearchProducts,
+  validateAccessPassword,
 } from "./script.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -92,6 +94,23 @@ test("left navigation does not include an orphan AI task metric panel", () => {
   assert.doesNotMatch(html, /今日 AI 任务/);
   assert.doesNotMatch(html, />128</);
   assert.doesNotMatch(styles, /\.signal-panel/);
+});
+
+test("page requires a configurable password before showing the app", () => {
+  const html = readFileSync(resolve(here, "index.html"), "utf8");
+  const styles = readFileSync(resolve(here, "styles.css"), "utf8");
+  const script = readFileSync(resolve(here, "script.js"), "utf8");
+
+  assert.match(html, /<body class="auth-locked">/);
+  assert.match(html, /id="accessGate"/);
+  assert.match(html, /id="accessPassword"/);
+  assert.match(html, /type="password"/);
+  assert.match(styles, /body\.auth-locked \.app-shell/);
+  assert.match(styles, /\.access-gate/);
+  assert.match(script, /const ACCESS_PASSWORD = "lifeos-demo"/);
+  assert.match(script, /function bindAccessGate/);
+  assert.equal(validateAccessPassword("lifeos-demo"), true);
+  assert.equal(validateAccessPassword("wrong"), false);
 });
 
 test("ai draft creates shoppable annotations and share-ready content", () => {
@@ -244,6 +263,16 @@ test("community has text and voice semantic search controls", () => {
   assert.match(styles, /\.semantic-search/);
 });
 
+test("initial page avoids eager shop rendering and decodes feed media asynchronously", () => {
+  const script = readFileSync(resolve(here, "script.js"), "utf8");
+
+  assert.doesNotMatch(script, /function init\(\) \{[\s\S]*renderShop\(\);[\s\S]*bindNavigation/);
+  assert.match(script, /if \(viewId === "shop" && !shopRendered\) renderShop\(\)/);
+  assert.match(script, /loading="\$\{index === 0 \? "eager" : "lazy"\}"/);
+  assert.match(script, /decoding="async"/);
+  assert.match(script, /fetchpriority="\$\{index === 0 \? "high" : "low"\}"/);
+});
+
 test("semantic search supports direct URL entry for browser verification", () => {
   const script = readFileSync(resolve(here, "script.js"), "utf8");
 
@@ -347,7 +376,8 @@ test("profile renders the five requested personal modules", () => {
   assert.match(styles, /\.circle-chat/);
   assert.match(styles, /\.space-board/);
   assert.match(styles, /\.profile-space-panel \.space-board/);
-  assert.match(styles, /background-size:\s*cover,\s*contain/);
+  assert.match(styles, /aspect-ratio:\s*3 \/ 2/);
+  assert.match(styles, /background-size:\s*cover,\s*cover/);
   assert.doesNotMatch(html, /id="profileDetail"/);
   assert.doesNotMatch(html, /AI CONTENT MEMORY/i);
   assert.doesNotMatch(html, /生成下一篇内容脚本/);
@@ -547,18 +577,15 @@ test("immersive scene supports direct entry for browser verification", () => {
   assert.match(script, /new URLSearchParams\(window\.location\.search\)\.get\("immersive"\)/);
 });
 
-test("desk immersive browse uses the uploaded desk glb model", () => {
+test("desk immersive browse uses the lightweight image space instead of desk glb", () => {
   const html = readFileSync(resolve(here, "index.html"), "utf8");
   const script = readFileSync(resolve(here, "script.js"), "utf8");
-  const styles = readFileSync(resolve(here, "styles.css"), "utf8");
   const deskScene = demoScenes.find((scene) => scene.id === "desk");
 
-  assert.equal(existsSync(resolve(here, "assets/desk.glb")), true);
-  assert.equal(deskScene?.model, "./assets/desk.glb");
-  assert.match(html, /model-viewer/);
-  assert.match(script, /<model-viewer/);
-  assert.match(script, /scene\.model/);
-  assert.match(styles, /\.space-model-viewer/);
+  assert.equal(deskScene?.model, undefined);
+  assert.doesNotMatch(html, /model-viewer/);
+  assert.doesNotMatch(script, /<model-viewer/);
+  assert.doesNotMatch(script, /scene\.model/);
 });
 
 test("cooking immersive browse plays the uploaded cooking video", () => {
@@ -589,12 +616,21 @@ test("shop supports text and voice semantic product search", () => {
 
   assert.match(html, /id="shopSearchForm"/);
   assert.match(html, /id="shopSearchInput"/);
+  assert.match(html, /data-shop-search-mode="solution"/);
+  assert.match(html, /data-shop-search-mode="item"/);
   assert.match(html, /data-shop-voice-search/);
   assert.match(script, /function bindShopSearch\(\)/);
+  assert.match(script, /activeShopSearchMode === "item"/);
   assert.match(script, /semanticSearchProducts\(query\)/);
+  assert.match(script, /buildShopSolution\(query\)/);
+  assert.match(script, /function renderShopSolutionResults\(solution\)/);
   assert.match(script, /function openShopSearchFromUrl\(\)/);
-  assert.match(script, /new URLSearchParams\(window\.location\.search\)\.get\("shopSearch"\)/);
+  assert.match(script, /const params = new URLSearchParams\(window\.location\.search\)/);
+  assert.match(script, /params\.get\("shopSearch"\)/);
+  assert.match(script, /params\.get\("shopSearchMode"\) === "item"/);
+  assert.match(styles, /\.shop-search-mode/);
   assert.match(styles, /\.shop-search-summary/);
+  assert.match(styles, /\.shop-solution-panel/);
   assert.match(styles, /\.shop-result-grid/);
 });
 
@@ -607,6 +643,21 @@ test("shop semantic search returns relevant products for family camping", () => 
   assert.ok(names.includes("车内手机支架"));
   assert.ok(names.includes("车把手挂钩"));
   assert.ok(results.every((item) => item.category));
+});
+
+test("shop solution search builds structured family camping purchase plans", () => {
+  const solution = buildShopSolution("帮我寻找带5岁孩子去露营的商品方案");
+
+  assert.equal(solution.title, "亲子露营一站式购买方案");
+  assert.deepEqual(solution.sceneTags, ["亲子", "安全", "收纳", "补能", "做饭"]);
+  assert.ok(solution.understanding.includes("安全边界"));
+  assert.ok(solution.essentials.some((item) => item.name === "便携餐具套装"));
+  assert.ok(solution.essentials.some((item) => item.name === "折叠锅具"));
+  assert.deepEqual(
+    solution.bundles.map((bundle) => bundle.name),
+    ["预算版", "品质版", "轻量版"],
+  );
+  assert.ok(solution.bundles.every((bundle) => bundle.products.length >= 2));
 });
 
 test("shop product cards open product detail in the right inspector", () => {

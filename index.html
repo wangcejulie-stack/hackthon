@@ -4,11 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LifeOS 生活方式引擎</title>
-    <link rel="stylesheet" href="./styles.css?v=2026060203" />
+    <link rel="stylesheet" href="./styles.css?v=2026060501" />
   </head>
-  <body>
+  <body class="auth-locked">
     <div class="ambient ambient-a"></div>
     <div class="ambient ambient-b"></div>
+
+    <section class="access-gate" id="accessGate" aria-label="访问密码">
+      <form class="access-card" id="accessForm">
+        <p class="eyebrow">Private Demo</p>
+        <h1>LifeOS 访问验证</h1>
+        <p>请输入访问密码后查看产品 demo。</p>
+        <label for="accessPassword">访问密码</label>
+        <input id="accessPassword" type="password" autocomplete="current-password" placeholder="输入密码" />
+        <button class="primary-action full" type="submit">进入 demo</button>
+        <span class="access-error" id="accessError" aria-live="polite"></span>
+      </form>
+    </section>
 
     <main class="app-shell">
       <aside class="rail" aria-label="产品导航">
@@ -136,6 +148,10 @@
             </div>
             <form class="semantic-search shop-semantic-search" id="shopSearchForm" role="search">
               <label for="shopSearchInput">AI 商品语义搜索</label>
+              <div class="shop-search-mode" role="group" aria-label="商城搜索模式">
+                <button class="active" data-shop-search-mode="solution" type="button">搜方案</button>
+                <button data-shop-search-mode="item" type="button">搜单品</button>
+              </div>
               <div class="semantic-search-box">
                 <input
                   id="shopSearchInput"
@@ -343,7 +359,6 @@
       </div>
     </section>
 
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
-    <script type="module" src="./script.js?v=2026060203"></script>
+    <script type="module" src="./script.js?v=2026060501"></script>
   </body>
 </html>
