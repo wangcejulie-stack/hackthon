@@ -383,6 +383,28 @@ test("profile renders the five requested personal modules", () => {
   assert.doesNotMatch(html, /生成下一篇内容脚本/);
 });
 
+test("car space acts as an AI travel scenario decision board", () => {
+  const html = readFileSync(resolve(here, "index.html"), "utf8");
+  const script = readFileSync(resolve(here, "script.js"), "utf8");
+  const styles = readFileSync(resolve(here, "styles.css"), "utf8");
+
+  assert.match(html, /data-car-space-scenario="camping"/);
+  assert.match(html, /data-car-space-scenario="commute"/);
+  assert.match(html, /data-car-space-scenario="roadtrip"/);
+  assert.match(html, /data-car-space-output/);
+  assert.match(script, /const carSpaceScenarios = {/);
+  assert.match(script, /亲子露营车空间诊断/);
+  assert.match(script, /补齐这个场景/);
+  assert.match(script, /换成更便宜的/);
+  assert.match(script, /生成同款内容/);
+  assert.match(script, /function renderCarSpaceScenario\(scenarioId\)/);
+  assert.match(script, /data-car-hotspot/);
+  assert.match(script, /data-car-action/);
+  assert.match(styles, /\.car-scenario-switch/);
+  assert.match(styles, /\.car-ai-diagnosis/);
+  assert.match(styles, /\.car-decision-actions/);
+});
+
 test("profile hero uses 策策 as the creator name", () => {
   const html = readFileSync(resolve(here, "index.html"), "utf8");
   assert.match(html, /策策的智能生活方式档案/);
