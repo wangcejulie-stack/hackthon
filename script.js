@@ -1986,6 +1986,106 @@ const circleChats = {
   },
 };
 
+const carSpaceScenarios = {
+  camping: {
+    title: "亲子露营车空间诊断",
+    scene: "周末带 5 岁孩子去营地做饭、玩水、过夜",
+    gap: "后备箱物品能装下，但孩子餐具、调料和应急电源没有形成独立取用区，出发前和做饭时都会增加翻找成本。",
+    recommendation: "把后备箱分成「孩子可取餐具」「轻烹饪」「应急供电」三块，优先补齐折叠锅具、露营调料盒和小型应急电源。",
+    publishCopy: "Model Y 亲子露营车内准备：不是多买装备，而是让孩子能自己拿餐具，做饭区不乱，晚上也有备用电源。",
+    hotspots: [
+      { area: "后备箱", x: 69, y: 64, label: "后备箱分层", insight: "露营装备和餐具混放，真正的问题是取放路径太长。", product: "露营调料盒" },
+      { area: "后排", x: 44, y: 54, label: "儿童取用区", insight: "孩子常用物品应该在后排可见位置，减少停车后反复开箱。", product: "便携餐具套装" },
+      { area: "前排", x: 29, y: 38, label: "导航与供电", insight: "长时间开车和营地停留都依赖稳定供电，不只是手机支架问题。", product: "应急电源" },
+    ],
+  },
+  commute: {
+    title: "日常通勤车空间诊断",
+    scene: "北京工作日通勤、停车场补妆、临时接朋友",
+    gap: "前排已经有基础支架，但香氛、纸巾和随身物没有固定落点，车内容易变成临时杂物区。",
+    recommendation: "优先建立前排轻收纳和气味记忆，让通勤空间保持稳定、清爽、可快速恢复。",
+    publishCopy: "通勤车空间不用堆装备，固定手机、香氛、纸巾和随手包位置，车就会从交通工具变成每天可控的私人空间。",
+    hotspots: [
+      { area: "中控", x: 48, y: 43, label: "手机支架", insight: "支架承担导航、音乐和语音输入，是通勤决策入口。", product: "车载手机支架" },
+      { area: "副驾", x: 67, y: 50, label: "随手收纳", insight: "包、口红和工牌没有固定点，会降低空间秩序感。", product: "车载收纳盒" },
+      { area: "出风口", x: 78, y: 35, label: "气味记忆", insight: "香氛不是装饰，它让用户把车和稳定情绪绑定。", product: "车载香氛" },
+    ],
+  },
+  roadtrip: {
+    title: "长途自驾车空间诊断",
+    scene: "周末跑山、两人长途、服务区短暂停留",
+    gap: "当前车空间适合短途，但水杯、充电、零食和应急物没有按驾驶节奏分布，长途会频繁打断体验。",
+    recommendation: "把前排变成连续驾驶区，后排变成补给区，后备箱保留应急和替换衣物，减少中途停车整理。",
+    publishCopy: "长途自驾好不好开，很多时候不是车的问题，是补给、充电和应急物有没有放在正确位置。",
+    hotspots: [
+      { area: "前排", x: 36, y: 42, label: "连续驾驶区", insight: "水杯、导航和充电线要覆盖 2 小时连续驾驶。", product: "保温杯" },
+      { area: "后排", x: 58, y: 58, label: "途中补给", insight: "零食和纸巾放后排，比塞进中控更适合两人轮换取用。", product: "车载收纳盒" },
+      { area: "后备箱", x: 75, y: 68, label: "应急备份", insight: "应急电源和薄外套应该可见，不能压在露营装备底部。", product: "应急电源" },
+    ],
+  },
+};
+
+function renderCarActionResult(scenario, hotspot, action) {
+  if (action === "换成更便宜的") {
+    return `<strong>替代建议</strong><span>保留「${hotspot.area}」功能，优先找同场景低价款：${hotspot.product} 可先看轻量基础版。</span>`;
+  }
+
+  if (action === "生成同款内容") {
+    return `<strong>可发布文案</strong><span>${scenario.publishCopy}</span>`;
+  }
+
+  return `<strong>补齐方案</strong><span>${scenario.recommendation}</span>`;
+}
+
+function renderCarSpaceDiagnosis(scenario, hotspot, action) {
+  const output = document.querySelector("[data-car-space-output]");
+  if (!output || !hotspot) return;
+
+  output.innerHTML = `
+    <p class="eyebrow">AI Travel Space</p>
+    <h4>${scenario.title}</h4>
+    <p class="car-scene-copy">${scenario.scene}</p>
+    <div class="car-insight">
+      <strong>${hotspot.area} / ${hotspot.product}</strong>
+      <span>${hotspot.insight}</span>
+    </div>
+    <p>${scenario.gap}</p>
+    <p>${scenario.recommendation}</p>
+    <div class="car-decision-actions" role="group" aria-label="车空间轻决策">
+      <button class="${action === "补齐这个场景" ? "active" : ""}" data-car-action="complete" type="button">补齐这个场景</button>
+      <button class="${action === "换成更便宜的" ? "active" : ""}" data-car-action="cheaper" type="button">换成更便宜的</button>
+      <button class="${action === "生成同款内容" ? "active" : ""}" data-car-action="publish" type="button">生成同款内容</button>
+    </div>
+    <div class="car-action-result">
+      ${renderCarActionResult(scenario, hotspot, action)}
+    </div>
+  `;
+}
+
+function renderCarSpaceScenario(scenarioId) {
+  const scenario = carSpaceScenarios[scenarioId] ?? carSpaceScenarios.camping;
+  const board = document.querySelector("#carSpaceBoard");
+  if (!board) return;
+
+  board.innerHTML = scenario.hotspots
+    .map(
+      (hotspot, index) => `
+        <button
+          class="car-hotspot ${index === 0 ? "active" : ""}"
+          data-car-hotspot="${index}"
+          type="button"
+          style="--x:${hotspot.x}%; --y:${hotspot.y}%"
+          aria-label="${hotspot.area}：${hotspot.label}"
+        >
+          <span>${hotspot.label}</span>
+        </button>
+      `,
+    )
+    .join("");
+
+  renderCarSpaceDiagnosis(scenario, scenario.hotspots[0], "补齐这个场景");
+}
+
 function bindProfileDashboard() {
   document.querySelectorAll("[data-profile-subtab]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -2010,6 +2110,50 @@ function bindProfileDashboard() {
         .forEach((panel) => panel.classList.toggle("active", panel.dataset.spacePanel === target));
     });
   });
+
+  document.querySelectorAll("[data-car-space-scenario]").forEach((button) => {
+    button.addEventListener("click", () => {
+      document
+        .querySelectorAll("[data-car-space-scenario]")
+        .forEach((item) => item.classList.toggle("active", item === button));
+      renderCarSpaceScenario(button.dataset.carSpaceScenario);
+    });
+  });
+
+  document.querySelector("#carSpaceBoard")?.addEventListener("click", (event) => {
+    const hotspotButton = event.target.closest("[data-car-hotspot]");
+    if (!hotspotButton) return;
+
+    const activeScenario =
+      document.querySelector("[data-car-space-scenario].active")?.dataset.carSpaceScenario ?? "camping";
+    const scenario = carSpaceScenarios[activeScenario] ?? carSpaceScenarios.camping;
+    const hotspot = scenario.hotspots[Number(hotspotButton.dataset.carHotspot)] ?? scenario.hotspots[0];
+    document
+      .querySelectorAll("[data-car-hotspot]")
+      .forEach((item) => item.classList.toggle("active", item === hotspotButton));
+    renderCarSpaceDiagnosis(scenario, hotspot, "补齐这个场景");
+  });
+
+  document.querySelector("[data-car-space-output]")?.addEventListener("click", (event) => {
+    const actionButton = event.target.closest("[data-car-action]");
+    if (!actionButton) return;
+
+    const activeScenario =
+      document.querySelector("[data-car-space-scenario].active")?.dataset.carSpaceScenario ?? "camping";
+    const scenario = carSpaceScenarios[activeScenario] ?? carSpaceScenarios.camping;
+    const activeHotspotIndex = Number(
+      document.querySelector("[data-car-hotspot].active")?.dataset.carHotspot ?? 0,
+    );
+    const hotspot = scenario.hotspots[activeHotspotIndex] ?? scenario.hotspots[0];
+    const actionMap = {
+      complete: "补齐这个场景",
+      cheaper: "换成更便宜的",
+      publish: "生成同款内容",
+    };
+    renderCarSpaceDiagnosis(scenario, hotspot, actionMap[actionButton.dataset.carAction] ?? "补齐这个场景");
+  });
+
+  renderCarSpaceScenario("camping");
 
   document.querySelectorAll("[data-circle-room]").forEach((button) => {
     button.addEventListener("click", () => {

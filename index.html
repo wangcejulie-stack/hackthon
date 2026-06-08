@@ -317,12 +317,15 @@
                 <div class="space-palette"><button>换沙发</button><button>加绿植</button><button>换灯光</button></div>
               </div>
               <div class="profile-space-panel" data-space-panel="car">
-                <div class="space-board" style="--cover-image: url('./assets/车空间.jpeg')">
-                  <span style="--x:52%; --y:44%">手机支架</span>
-                  <span style="--x:70%; --y:66%">应急电源</span>
-                  <span style="--x:82%; --y:36%">香氛</span>
+                <div class="car-scenario-switch" role="group" aria-label="车空间出行场景">
+                  <button class="active" data-car-space-scenario="camping" type="button">亲子露营</button>
+                  <button data-car-space-scenario="commute" type="button">日常通勤</button>
+                  <button data-car-space-scenario="roadtrip" type="button">长途自驾</button>
                 </div>
-                <div class="space-palette"><button>换香氛</button><button>加收纳</button><button>调氛围灯</button></div>
+                <div class="car-space-workbench">
+                  <div class="space-board car-space-board" id="carSpaceBoard" style="--cover-image: url('./assets/车空间.jpeg')"></div>
+                  <article class="car-ai-diagnosis" data-car-space-output aria-live="polite"></article>
+                </div>
               </div>
               <div class="profile-space-panel" data-space-panel="desk">
                 <div class="space-board" style="--cover-image: url('./assets/桌空间.jpeg')">
