@@ -405,6 +405,14 @@ test("car space acts as an AI travel scenario decision board", () => {
   assert.match(styles, /\.car-decision-actions/);
 });
 
+test("car space image hotspots do not show persistent text over the image", () => {
+  const styles = readFileSync(resolve(here, "styles.css"), "utf8");
+
+  assert.match(styles, /\.car-hotspot\s*{[\s\S]*width:\s*34px[\s\S]*height:\s*34px/);
+  assert.match(styles, /\.car-hotspot span\s*{[\s\S]*clip:\s*rect\(0 0 0 0\)/);
+  assert.match(styles, /\.car-hotspot::after\s*{[\s\S]*content:\s*"AI"/);
+});
+
 test("profile hero uses 策策 as the creator name", () => {
   const html = readFileSync(resolve(here, "index.html"), "utf8");
   assert.match(html, /策策的智能生活方式档案/);
