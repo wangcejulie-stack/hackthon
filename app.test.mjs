@@ -413,6 +413,14 @@ test("car space image hotspots do not show persistent text over the image", () =
   assert.match(styles, /\.car-hotspot::after\s*{[\s\S]*content:\s*"AI"/);
 });
 
+test("car space board is constrained away from the diagnosis panel", () => {
+  const styles = readFileSync(resolve(here, "styles.css"), "utf8");
+
+  assert.match(styles, /\.car-space-workbench\s*{[\s\S]*overflow:\s*hidden/);
+  assert.match(styles, /\.car-space-board\s*{[\s\S]*width:\s*100%[\s\S]*max-width:\s*100%[\s\S]*aspect-ratio:\s*auto/);
+  assert.match(styles, /\.car-ai-diagnosis\s*{[\s\S]*position:\s*relative[\s\S]*z-index:\s*3/);
+});
+
 test("profile hero uses 策策 as the creator name", () => {
   const html = readFileSync(resolve(here, "index.html"), "utf8");
   assert.match(html, /策策的智能生活方式档案/);
