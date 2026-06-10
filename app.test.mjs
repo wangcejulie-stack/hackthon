@@ -61,6 +61,20 @@ test("feed uses the uploaded 王策 avatar image", () => {
   assert.match(script, /王策: "\.\/assets\/策策1\.jpeg"/);
 });
 
+test("search result authors use generated netizen identities", () => {
+  const results = semanticSearchNotes("帮我寻找带5岁孩子去露营的商品方案").filter((scene) =>
+    scene.id.startsWith("search-"),
+  );
+  const script = readFileSync(resolve(here, "script.js"), "utf8");
+  const styles = readFileSync(resolve(here, "styles.css"), "utf8");
+
+  assert.ok(results.length >= 3);
+  assert.ok(results.every((scene) => scene.creator !== "AI 搜索"));
+  assert.ok(results.every((scene) => /^[\u4e00-\u9fa5A-Za-z0-9_]{2,8}$/.test(scene.creator)));
+  assert.match(script, /class="creator-generated-avatar"/);
+  assert.match(styles, /\.creator-generated-avatar/);
+});
+
 test("homepage scene images use local Feishu document assets", () => {
   for (const scene of demoScenes) {
     assert.match(scene.image, /^\.\/assets\/(?:scene-(desk|edc)|做饭)\.png$|^\.\/assets\/社区页面车图片\.jpeg$/);
@@ -121,10 +135,13 @@ test("page requires a configurable password before showing the app", () => {
   assert.match(html, /id="accessGate"/);
   assert.match(html, /id="accessPassword"/);
   assert.match(html, /type="password"/);
+  assert.match(html, /window\.__lifeosAccessGateBound = true/);
+  assert.match(html, /const password = "lifeos-demo"/);
   assert.match(styles, /body\.auth-locked \.app-shell/);
   assert.match(styles, /\.access-gate/);
   assert.match(script, /const ACCESS_PASSWORD = "lifeos-demo"/);
   assert.match(script, /function bindAccessGate/);
+  assert.match(script, /window\.__lifeosAccessGateBound/);
   assert.equal(validateAccessPassword("lifeos-demo"), true);
   assert.equal(validateAccessPassword("wrong"), false);
 });
@@ -313,19 +330,28 @@ test("semantic search understands family camping product intent", () => {
   assert.ok(results[0].products.some((product) => /应急|收纳|手机支架|香氛/.test(product)));
 });
 
-test("family camping car search note uses the requested camping tableware title", () => {
+test("family camping search results do not repeat the original tableware note", () => {
+  const results = semanticSearchNotes("帮我寻找带5岁孩子去露营的商品方案");
+  const titles = results.map((scene) => scene.title);
+
+  assert.equal(new Set(titles).size, titles.length);
+  assert.equal(titles.filter((title) => title === "我的露营餐具分享").length, 1);
+});
+
+test("family camping first AI search note uses a medical emergency plan", () => {
   const results = semanticSearchNotes("帮我寻找带5岁孩子去露营的商品方案");
 
   assert.equal(results[0].id, "search-family-camping-car");
-  assert.equal(results[0].title, "我的露营餐具分享");
+  assert.equal(results[0].title, "亲子露营医护应急方案");
+  assert.ok(results[0].tags.some((tag) => /医护|应急|儿童/.test(tag)));
 });
 
-test("family camping car search note uses the cooking image", () => {
+test("family camping medical search note uses the healthcare image", () => {
   const script = readFileSync(resolve(here, "script.js"), "utf8");
-  const imagePath = "assets/做饭.png";
+  const imagePath = "assets/医护.png";
 
   assert.equal(existsSync(resolve(here, imagePath)), true);
-  assert.match(script, /id: "search-family-camping-car"[\s\S]*image: "\.\/assets\/做饭\.png"/);
+  assert.match(script, /id: "search-family-camping-car"[\s\S]*image: "\.\/assets\/医护\.png"/);
 });
 
 test("family camping room search note uses a dedicated matching image", () => {
@@ -554,9 +580,9 @@ test("studio video generation uses the family travel vlog asset", () => {
     outputType: "视频",
   });
 
-  assert.equal(existsSync(resolve(here, "assets/做饭视频.mp4")), true);
+  assert.equal(existsSync(resolve(here, "assets/我的自驾游玩vlog.mp4")), true);
   assert.equal(draft.outputType, "视频");
-  assert.equal(draft.generatedVideo.src, "./assets/做饭视频.mp4");
+  assert.equal(draft.generatedVideo.src, "./assets/我的自驾游玩vlog.mp4");
   assert.match(draft.generatedVideo.title, /周末家庭自驾赏花记录/);
 });
 

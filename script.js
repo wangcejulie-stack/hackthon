@@ -36,6 +36,7 @@ function unlockApp() {
 
 function bindAccessGate() {
   if (typeof document === "undefined") return;
+  if (typeof window !== "undefined" && window.__lifeosAccessGateBound) return;
 
   const form = document.querySelector("#accessForm");
   const input = document.querySelector("#accessPassword");
@@ -425,43 +426,43 @@ const semanticSearchScenes = [
   {
     id: "search-family-camping-car",
     type: "AI方案",
-    title: "我的露营餐具分享",
-    creator: "AI 搜索",
-    image: "./assets/做饭.png",
+    title: "亲子露营医护应急方案",
+    creator: "小北",
+    image: "./assets/医护.png",
     scenario: "亲子露营",
-    tags: ["儿童安全", "露营补给", "车载收纳"],
-    products: ["应急电源", "车内手机支架", "车载香氛", "车把手挂钩"],
+    tags: ["儿童医护", "户外应急", "露营补给"],
+    products: ["应急电源", "车载纸巾盒", "车载水杯", "车把手挂钩"],
     searchSummary:
-      "大模型把需求理解为：孩子安全、长途舒适、露营补能和车内取放效率，优先推荐能降低照看成本的车载商品。",
+      "大模型把需求理解为：带 5 岁孩子露营时，医护应急、补水补能和车内随手取用优先级高于装饰型商品。",
     feedLabels: [
-      { text: "儿童可视导航", x: 58, y: 44 },
-      { text: "露营补能点", x: 63, y: 75 },
-      { text: "轻香座舱", x: 82, y: 35 },
+      { text: "儿童应急包", x: 35, y: 40 },
+      { text: "补水补能", x: 62, y: 66 },
+      { text: "随手清洁", x: 76, y: 36 },
     ],
     hotspots: [
       {
-        x: 58,
-        y: 49,
-        product: "车内手机支架",
-        label: "儿童可视导航",
-        review: "带孩子出行时，导航、营地路线和亲子音乐都能保持在中控视线内。",
-        productUrl: "#shop-%E8%BD%A6%E5%86%85%E6%89%8B%E6%9C%BA%E6%94%AF%E6%9E%B6",
+        x: 35,
+        y: 44,
+        product: "车把手挂钩",
+        label: "儿童应急包",
+        review: "退烧贴、创可贴、驱蚊和小药包应该固定在伸手可及的位置，不能压在后备箱深处。",
+        productUrl: "#shop-%E8%BD%A6%E6%8A%8A%E6%89%8B%E6%8C%82%E9%92%A9",
       },
       {
         x: 62,
-        y: 78,
+        y: 68,
         product: "应急电源",
-        label: "露营补能点",
-        review: "孩子的夜灯、平板、风扇和手机都需要补电，应急电源是亲子露营的稳定底座。",
+        label: "补水补能",
+        review: "露营夜灯、手机和孩子娱乐设备都需要备用电量，返程前也能降低突发焦虑。",
         productUrl: "#shop-%E5%BA%94%E6%80%A5%E7%94%B5%E6%BA%90",
       },
       {
-        x: 82,
+        x: 76,
         y: 40,
-        product: "车载香氛",
-        label: "轻香座舱",
-        review: "长途车内不能太浓，轻香型更适合孩子乘坐和午睡。",
-        productUrl: "#shop-%E8%BD%A6%E8%BD%BD%E9%A6%99%E6%B0%9B",
+        product: "车载纸巾盒",
+        label: "随手清洁",
+        review: "孩子吃零食、擦汗、临时清洁都需要高频纸巾，固定位置比临时翻包更重要。",
+        productUrl: "#shop-%E8%BD%A6%E8%BD%BD%E7%BA%B8%E5%B7%BE%E7%9B%92",
       },
     ],
   },
@@ -469,7 +470,7 @@ const semanticSearchScenes = [
     id: "search-family-camping-edc",
     type: "AI方案",
     title: "亲子露营随身 EDC：孩子不离身的小物清单",
-    creator: "AI 搜索",
+    creator: "森屿",
     image: "./assets/玩具.png",
     scenario: "移动出行",
     tags: ["亲子", "轻量化", "随身补给"],
@@ -507,7 +508,7 @@ const semanticSearchScenes = [
     id: "search-family-camping-room",
     type: "AI方案",
     title: "把营地搭成孩子能安静待住的小客厅",
-    creator: "AI 搜索",
+    creator: "橙子妈",
     image: "./assets/scene-family-camp-lounge.png",
     scenario: "营地布置",
     tags: ["亲子氛围", "灯光", "休息区"],
@@ -809,7 +810,7 @@ export function generateContentFromFragments({ fragmentIds, theme, outputType })
   const generatedVideo =
     type === "视频"
       ? {
-          src: "./assets/做饭视频.mp4",
+          src: "./assets/我的自驾游玩vlog.mp4",
           poster: "./assets/风景图2.jpeg",
           title: `${cleanTheme}｜AI 生成视频`,
         }
@@ -932,7 +933,9 @@ function getCommentCount(scene, index) {
 
 function renderCreatorMark(creator) {
   const avatar = creatorAvatars[creator];
-  if (!avatar) return `<span class="creator-dot"></span>`;
+  if (!avatar) {
+    return `<span class="creator-generated-avatar" aria-label="${creator}头像">${creator.slice(0, 1)}</span>`;
+  }
   return `<img class="creator-avatar" src="${avatar}" alt="${creator}头像" loading="lazy" decoding="async" />`;
 }
 
