@@ -77,6 +77,7 @@ test("fourth community card uses the local car interior image and matching copy"
   assert.equal(carInteriorScene.type, "车空间");
   assert.equal(carInteriorScene.scenario, "日常通勤");
   assert.equal(carInteriorScene.title, "我的通勤车内小宇宙");
+  assert.equal(carInteriorScene.creator, "Gabi");
   assert.deepEqual(carInteriorScene.tags, ["车内收纳", "通勤舒适", "氛围感"]);
   assert.deepEqual(carInteriorScene.products, ["车内手机支架", "车载香氛", "车载纸巾盒", "车载水杯"]);
   assert.match(script, /方向盘套让驾驶触感更稳定/);
@@ -446,10 +447,10 @@ test("car space board is constrained away from the diagnosis panel", () => {
   assert.match(styles, /\.car-ai-diagnosis\s*{[\s\S]*position:\s*relative[\s\S]*z-index:\s*3/);
 });
 
-test("profile hero uses 策策 as the creator name", () => {
+test("profile hero uses Gabi as the creator name", () => {
   const html = readFileSync(resolve(here, "index.html"), "utf8");
-  assert.match(html, /策策的智能生活方式档案/);
-  assert.doesNotMatch(html, /Gabi的智能生活方式档案/);
+  assert.match(html, /Gabi的智能生活方式档案/);
+  assert.doesNotMatch(html, /策策的智能生活方式档案/);
 });
 
 test("profile hero includes AI summarized Gabi persona memory", () => {
@@ -471,7 +472,7 @@ test("profile hero uses the Gabi avatar image", () => {
   const html = readFileSync(resolve(here, "index.html"), "utf8");
   const styles = readFileSync(resolve(here, "styles.css"), "utf8");
   assert.equal(existsSync(resolve(here, "assets/Gabi.jpeg")), true);
-  assert.match(html, /<img src="\.\/assets\/Gabi\.jpeg" alt="策策头像" \/>/);
+  assert.match(html, /<img src="\.\/assets\/Gabi\.jpeg" alt="Gabi头像" \/>/);
   assert.match(styles, /\.avatar img/);
   assert.doesNotMatch(html, /<div class="avatar">G<\/div>/);
 });
@@ -481,27 +482,31 @@ test("studio page has selectable multimodal inspiration fragments", () => {
   const styles = readFileSync(resolve(here, "styles.css"), "utf8");
 
   assert.match(html, /id="inspirationGrid"/);
-  assert.match(html, /data-fragment-id="weight-text"/);
-  assert.match(html, /data-fragment-id="salad-image"/);
-  assert.match(html, /data-fragment-id="workout-video"/);
-  assert.match(html, /data-fragment-id="voice-note"/);
+  assert.match(html, /data-fragment-id="route-map"/);
+  assert.match(html, /data-fragment-id="flower-image"/);
+  assert.match(html, /data-fragment-id="family-vlog"/);
+  assert.match(html, /data-fragment-id="travel-note"/);
   assert.match(html, /name="outputType"[\s\S]*value="图文"/);
   assert.match(html, /name="outputType"[\s\S]*value="视频"/);
-  assert.match(html, /我的一周减脂生活/);
+  assert.match(html, /周末家庭自驾赏花记录/);
   assert.match(styles, /\.inspiration-grid/);
   assert.match(styles, /\.fragment-card\.selected/);
 });
 
-test("studio inspiration media fragments use concrete salad, workout and voice visuals", () => {
+test("studio inspiration media fragments use concrete car life visuals", () => {
   const html = readFileSync(resolve(here, "index.html"), "utf8");
   const styles = readFileSync(resolve(here, "styles.css"), "utf8");
 
-  assert.equal(existsSync(resolve(here, "assets/fragment-salad.svg")), true);
-  assert.equal(existsSync(resolve(here, "assets/fragment-workout-cover.svg")), true);
-  assert.match(html, /src="\.\/assets\/fragment-salad\.svg"/);
-  assert.match(html, /alt="轻食沙拉晚餐图片"/);
-  assert.match(html, /src="\.\/assets\/fragment-workout-cover\.svg"/);
-  assert.match(html, /alt="女生居家运动视频封面"/);
+  assert.equal(existsSync(resolve(here, "assets/路线图.jpeg")), true);
+  assert.equal(existsSync(resolve(here, "assets/风景图1.jpeg")), true);
+  assert.equal(existsSync(resolve(here, "assets/风景图2.jpeg")), true);
+  assert.equal(existsSync(resolve(here, "assets/做饭视频.mp4")), true);
+  assert.match(html, /src="\.\/assets\/路线图\.jpeg"/);
+  assert.match(html, /alt="自驾路线图"/);
+  assert.match(html, /src="\.\/assets\/风景图1\.jpeg"/);
+  assert.match(html, /alt="赏花自驾车生活照片"/);
+  assert.match(html, /src="\.\/assets\/风景图2\.jpeg"/);
+  assert.match(html, /alt="家人自驾 Vlog 封面"/);
   assert.match(html, /class="video-play-icon" aria-hidden="true"/);
   assert.match(html, /class="voice-icon" aria-hidden="true"/);
   assert.match(styles, /\.fragment-cover/);
@@ -511,15 +516,15 @@ test("studio inspiration media fragments use concrete salad, workout and voice v
 
 test("studio AI combines selected fragments into publishable content with shoppable links", () => {
   const draft = generateContentFromFragments({
-    fragmentIds: ["weight-text", "salad-image", "workout-video"],
-    theme: "我的一周减脂生活",
+    fragmentIds: ["route-map", "flower-image", "family-vlog"],
+    theme: "周末家庭自驾赏花记录",
     outputType: "图文",
   });
 
   assert.equal(draft.outputType, "图文");
-  assert.match(draft.title, /我的一周减脂生活/);
+  assert.match(draft.title, /周末家庭自驾赏花记录/);
   assert.equal(draft.selectedFragments.length, 3);
-  assert.match(draft.publishCopy, /20260501|减重1kg|轻食沙拉|在家运动/);
+  assert.match(draft.publishCopy, /自驾路线|赏花|家人|Vlog/);
   assert.ok(draft.productHotspots.length >= 3);
   assert.ok(draft.productHotspots.every((item) => item.productUrl.startsWith("#shop-")));
   assert.ok(draft.productHotspots.every((item) => getProductByName(item.product)));
@@ -528,31 +533,31 @@ test("studio AI combines selected fragments into publishable content with shoppa
 
 test("studio generated draft includes a real publishable image-text article", () => {
   const draft = generateContentFromFragments({
-    fragmentIds: ["weight-text", "salad-image", "workout-video"],
-    theme: "我的一周减脂生活",
+    fragmentIds: ["route-map", "flower-image", "family-vlog", "travel-note"],
+    theme: "周末家庭自驾赏花记录",
     outputType: "图文",
   });
 
-  assert.match(draft.article.title, /我的一周减脂生活/);
+  assert.match(draft.article.title, /周末家庭自驾赏花记录/);
   assert.ok(draft.article.sections.length >= 3);
   assert.match(
     draft.article.sections.map((section) => `${section.title} ${section.text}`).join(" "),
-    /减重1kg|轻食沙拉|居家运动/,
+    /自驾路线|赏花|注意事项|家人/,
   );
-  assert.ok(draft.article.hashtags.includes("#减脂生活"));
+  assert.ok(draft.article.hashtags.includes("#车生活"));
 });
 
-test("studio video generation uses the supplied generated video asset", () => {
+test("studio video generation uses the family travel vlog asset", () => {
   const draft = generateContentFromFragments({
-    fragmentIds: ["weight-text", "salad-image", "workout-video"],
-    theme: "我的一周减脂生活",
+    fragmentIds: ["route-map", "flower-image", "family-vlog"],
+    theme: "周末家庭自驾赏花记录",
     outputType: "视频",
   });
 
-  assert.equal(existsSync(resolve(here, "assets/generated-fat-loss-video.mp4")), true);
+  assert.equal(existsSync(resolve(here, "assets/做饭视频.mp4")), true);
   assert.equal(draft.outputType, "视频");
-  assert.equal(draft.generatedVideo.src, "./assets/generated-fat-loss-video.mp4");
-  assert.match(draft.generatedVideo.title, /我的一周减脂生活/);
+  assert.equal(draft.generatedVideo.src, "./assets/做饭视频.mp4");
+  assert.match(draft.generatedVideo.title, /周末家庭自驾赏花记录/);
 });
 
 test("studio output renders hotspots, editable link fields and user copy editor", () => {
@@ -581,7 +586,7 @@ test("studio generation renders the article in the right inspector", () => {
   assert.match(script, />发布</);
   assert.match(script, />存草稿</);
   assert.match(script, />分享到其他平台</);
-  assert.match(script, /我的一周减脂生活/);
+  assert.match(script, /周末家庭自驾赏花记录/);
   assert.match(styles, /\.generated-article/);
   assert.match(styles, /\.generated-article-cover/);
   assert.match(styles, /\.generated-post-section/);

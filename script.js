@@ -185,7 +185,7 @@ export const demoScenes = [
     id: "room",
     type: "车空间",
     title: "我的通勤车内小宇宙",
-    creator: "王策",
+    creator: "Gabi",
     image: "./assets/社区页面车图片.jpeg",
     scenario: "日常通勤",
     tags: ["车内收纳", "通勤舒适", "氛围感"],
@@ -305,36 +305,36 @@ const productMap = {
 
 const inspirationFragments = [
   {
-    id: "weight-text",
+    id: "route-map",
     type: "文本",
-    title: "20260501 减重1kg",
-    insight: "阶段变化明确，可以作为图文开头的成果钩子。",
-    content: "20260501 减重1kg",
-    products: ["低糖气泡水"],
+    title: "自驾路线图",
+    insight: "路线图让 AI 先理解出行半径、停车点和补给节奏。",
+    content: "自驾路线：北京出发，先到花海观景点，再去湖边停车区补给，返程避开晚高峰。",
+    products: ["车内手机支架", "应急电源"],
   },
   {
-    id: "salad-image",
+    id: "flower-image",
     type: "图片",
-    title: "轻食沙拉晚餐",
-    insight: "晚餐画面提供饮食结构和生活方式质感。",
-    content: "轻食沙拉：鸡胸、牛油果、小番茄和低脂酱汁。",
-    products: ["蛋白沙拉"],
+    title: "赏花风景照",
+    insight: "风景照片提供季节、情绪和封面视觉，适合做首图。",
+    content: "赏花风景照：车窗外是春季花海，适合做家庭自驾图文封面。",
+    products: ["车载香氛"],
   },
   {
-    id: "workout-video",
+    id: "family-vlog",
     type: "视频",
-    title: "在家做运动视频",
-    insight: "视频素材补足行动过程，让内容不只是结果打卡。",
-    content: "在家运动：20 分钟核心训练、拉伸和出汗记录。",
-    products: ["居家运动垫"],
+    title: "家人出行 Vlog",
+    insight: "Vlog 补足路上互动和真实陪伴，让内容不是单张风景照。",
+    content: "家人一起出行的 Vlog：上车、路上聊天、到达花海、停车补给和返程片段。",
+    products: ["车把手挂钩", "车载水杯"],
   },
   {
-    id: "voice-note",
+    id: "travel-note",
     type: "语音",
-    title: "语音：别太硬核",
-    insight: "口语表达让内容更像真实分享，不像模板化打卡。",
-    content: "这周不想太硬核，保持能坚持的节奏比极限燃脂重要。",
-    products: ["低糖气泡水"],
+    title: "语音：路上注意事项",
+    insight: "语音和文字记录把真实注意事项沉淀成 AI 可用的出行记忆。",
+    content: "注意事项：提前查停车场，孩子零食和水放在后排，手机导航固定好，回程前确认电量。",
+    products: ["车内手机支架", "应急电源"],
   },
 ];
 
@@ -794,7 +794,7 @@ export function generateContentFromFragments({ fragmentIds, theme, outputType })
     fragmentIds.includes(fragment.id),
   );
   const usableFragments = selectedFragments.length ? selectedFragments : inspirationFragments.slice(0, 3);
-  const cleanTheme = theme?.trim() || "我的一周减脂生活";
+  const cleanTheme = theme?.trim() || "周末家庭自驾赏花记录";
   const type = outputType === "视频" ? "视频" : "图文";
   const productNames = [...new Set(usableFragments.flatMap((fragment) => fragment.products))];
   const productHotspots = productNames.map((name, index) => ({
@@ -809,8 +809,8 @@ export function generateContentFromFragments({ fragmentIds, theme, outputType })
   const generatedVideo =
     type === "视频"
       ? {
-          src: "./assets/generated-fat-loss-video.mp4",
-          poster: "./assets/fragment-workout-cover.svg",
+          src: "./assets/做饭视频.mp4",
+          poster: "./assets/风景图2.jpeg",
           title: `${cleanTheme}｜AI 生成视频`,
         }
       : null;
@@ -823,20 +823,20 @@ export function generateContentFromFragments({ fragmentIds, theme, outputType })
     publishCopy: [
       `这周的主题是「${cleanTheme}」。`,
       `AI 读到的素材线索：${fragmentCopy}。`,
-      "内容会把结果、饮食和运动过程放在同一条故事线里，让它像真实生活记录，而不是单点打卡。",
+      "内容会把自驾路线、赏花风景、语音注意事项和家人 Vlog 放在同一条故事线里，让一次出行变成可发布、可复用、可购买的车生活内容。",
     ].join("\n"),
     storyboard:
       type === "视频"
         ? [
-            "开场：体重记录和日期快速闪现，建立一周目标。",
-            "中段：切轻食沙拉和居家运动片段，展示可坚持的节奏。",
-            "结尾：商品热点浮出，挂上同款轻食、运动垫和低糖饮品。",
+            "开场：路线图和出发时间闪现，交代家庭自驾目的地。",
+            "中段：切赏花风景、车内互动和停车补给片段，突出陪伴感。",
+            "结尾：AI 挂上手机支架、应急电源和车内收纳同款链接。",
           ]
         : [
-            "封面：我的一周减脂生活，突出减重 1kg。",
-            "图 2：轻食沙拉晚餐，标注高蛋白和低负担。",
-            "图 3：居家运动片段，补足行动过程。",
-            "图 4：AI 同款清单，可点击商品绿点购买。",
+            "封面：周末家庭自驾赏花，突出路线和季节感。",
+            "图 2：赏花风景照，标注停车点和拍照时间。",
+            "图 3：家人 Vlog 片段，补足路上互动和陪伴。",
+            "图 4：AI 同款清单，可点击车载商品绿点购买。",
           ],
     productHotspots,
     editableLinks: productHotspots.map((item) => ({
@@ -846,54 +846,58 @@ export function generateContentFromFragments({ fragmentIds, theme, outputType })
     })),
     article: buildGeneratedArticle(cleanTheme, usableFragments),
     userDescription:
-      "用户补充描述：这一周没有追求极限，只把晚餐、运动和饮料都换成更容易坚持的版本。",
+      "用户补充描述：这次想把路线、风景、车内准备和家人互动合成一篇可发布的自驾赏花记录。",
   };
 }
 
 function buildGeneratedArticle(theme, fragments) {
-  const hasVoice = fragments.some((fragment) => fragment.id === "voice-note");
+  const hasVoice = fragments.some((fragment) => fragment.id === "travel-note");
   return {
     title: theme,
-    subtitle: "一周没有硬扛，靠饮食、运动和小替换慢慢把状态找回来。",
-    coverNote: "AI 已把体重记录、轻食图片和运动视频组合成可发布图文。",
+    subtitle: "把路线、风景、注意事项和家人 Vlog 合成一篇车生活记录。",
+    coverNote: "AI 已把自驾路线图、赏花照片、语音注意事项和家庭 Vlog 组合成可发布图文。",
     sections: [
       {
-        title: "01 先记录一个小结果",
-        text: "20260501 体重比上周轻了 1kg。这个变化不夸张，但它说明节奏是有效的：不用极限节食，也能看到身体开始回应。",
+        title: "01 先定好自驾路线",
+        text: "这次不是随手发几张照片，而是先用自驾路线图明确出发、赏花、停车补给和返程节点。AI 会把路线变成内容结构，也能顺手提醒导航和补电准备。",
       },
       {
-        title: "02 晚餐换成轻食沙拉",
-        text: "这顿轻食沙拉负责把饱腹感和清爽感放在一起。鸡胸、蔬菜和低脂酱汁比单纯少吃更容易坚持，也更适合拍成生活方式图文。",
+        title: "02 让赏花照片做封面",
+        text: "赏花风景照负责提供季节感和情绪，适合作为首图。相比只写攻略，真实照片能让读者快速判断这条路线值不值得去。",
       },
       {
-        title: "03 在家运动补上行动感",
-        text: "居家运动视频让这篇内容不只是体重打卡。20 分钟核心训练和拉伸把过程补完整，看起来像真实的一周，而不是一张孤立截图。",
+        title: "03 把注意事项留给 AI",
+        text: "文字和语音记录里的注意事项会变成出行清单：停车场、孩子零食和水、手机导航、电量检查。它们不是正文负担，而是下一次出行可以复用的个人记忆。",
       },
       {
-        title: "04 AI 顺手挂上同款",
-        text: "文中出现的轻食沙拉、居家运动垫和低糖气泡水已经被 AI 匹配到商城同款，读者可以从绿点直接进入商品详情。",
+        title: "04 家人 Vlog 补上真实感",
+        text: "家人一起出行的 Vlog 负责补足路上的互动、停车补给和返程片段，让内容从风景分享变成完整的车生活故事。AI 会把车载手机支架、应急电源和随手收纳匹配成可购买同款。",
       },
     ],
     closing: hasVoice
-      ? "这周的关键词是：别太硬核，先做到能继续。"
-      : "这周的关键词是：把每一步做轻一点，才更容易继续。",
-    hashtags: ["#减脂生活", "#轻食晚餐", "#居家运动", "#AI生活记录"],
+      ? "这次的关键词是：先把注意事项说出来，下一次出行就不用重新想。"
+      : "这次的关键词是：把路线、风景和家人互动串成一条完整记忆。",
+    hashtags: ["#车生活", "#家庭自驾", "#赏花路线", "#AI生活记录"],
   };
 }
 
 function buildFragmentProductLabel(productName) {
   return {
-    蛋白沙拉: "同款轻食沙拉",
-    居家运动垫: "居家训练运动垫",
-    低糖气泡水: "低糖气泡水",
+    车内手机支架: "导航手机支架",
+    应急电源: "长途补能电源",
+    车载香氛: "同款车载香氛",
+    车把手挂钩: "后排随手挂钩",
+    车载水杯: "车载水杯",
   }[productName] ?? productName;
 }
 
 function buildFragmentProductReason(productName) {
   return {
-    蛋白沙拉: "和晚餐图片里的轻食结构一致，适合直接挂同款套餐。",
-    居家运动垫: "对应在家运动视频，用户可以从内容直接买到训练装备。",
-    低糖气泡水: "减脂生活里替代高糖饮料，和轻松坚持的主题一致。",
+    车内手机支架: "对应自驾路线和导航场景，减少低头找手机的风险。",
+    应急电源: "对应长途补能和返程前电量检查，降低户外焦虑。",
+    车载香氛: "对应赏花出行的车内氛围，让车空间更像可停留的移动客厅。",
+    车把手挂钩: "对应家人出行的随手收纳，零食袋和小包不用堆在座椅上。",
+    车载水杯: "对应路上补水和后排照顾，适合家庭自驾的高频取用。",
   }[productName] ?? "AI 根据素材语义在商城里匹配出的相似商品。";
 }
 
@@ -1370,8 +1374,8 @@ function renderAiOutput(draft) {
                 : ""
             }
             <span class="media-mode">${draft.outputType}</span>
-            <strong>${draft.outputType === "视频" ? "一周减脂生活片段" : "一周减脂生活封面"}</strong>
-            <p>减重 1kg / 轻食晚餐 / 居家运动</p>
+            <strong>${draft.outputType === "视频" ? "家庭自驾 Vlog 片段" : "家庭自驾赏花封面"}</strong>
+            <p>自驾路线 / 赏花风景 / 家人 Vlog</p>
             ${renderPublishHotspots(draft)}
           </div>
           <div class="publish-copy-card">
@@ -1487,8 +1491,8 @@ function renderGeneratedArticleHotspots(draft) {
 function renderGeneratedArticleCover(draft) {
   const coverCopy = `
     <div class="generated-cover-copy">
-      <span>20260501</span>
-      <strong>减重 1kg</strong>
+      <span>Weekend Drive</span>
+      <strong>家庭自驾赏花</strong>
       <em>${draft.article.coverNote}</em>
     </div>
   `;
@@ -1505,8 +1509,8 @@ function renderGeneratedArticleCover(draft) {
 
   return `
     <div class="generated-article-cover">
-      <img src="./assets/fragment-salad.svg" alt="轻食沙拉图文封面" />
-      <img src="./assets/fragment-workout-cover.svg" alt="居家运动图文封面" />
+      <img src="./assets/路线图.jpeg" alt="自驾路线图文封面" />
+      <img src="./assets/风景图1.jpeg" alt="赏花自驾图文封面" />
       ${coverCopy}
       ${renderGeneratedArticleHotspots(draft)}
     </div>
