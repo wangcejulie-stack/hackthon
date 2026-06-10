@@ -672,6 +672,13 @@ test("shop categories align with the product loop", () => {
   );
 });
 
+test("car essentials shop category uses a car interior cover image", () => {
+  const carCategory = getShopCategories().find((category) => category.name === "车载必备");
+
+  assert.equal(carCategory?.image, "./assets/社区页面车图片.jpeg");
+  assert.equal(existsSync(resolve(here, "assets/社区页面车图片.jpeg")), true);
+});
+
 test("shop supports text and voice semantic product search", () => {
   const html = readFileSync(resolve(here, "index.html"), "utf8");
   const script = readFileSync(resolve(here, "script.js"), "utf8");

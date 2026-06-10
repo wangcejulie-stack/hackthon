@@ -234,8 +234,7 @@ const creatorAvatars = {
 const shopCategories = [
   {
     name: "车载必备",
-    image:
-      "https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=900&q=80",
+    image: "./assets/社区页面车图片.jpeg",
     products: [
       product("车内手机支架", "￥129", "中控视线内导航更安全，适合自驾和露营路线切换。"),
       product("应急电源", "￥399", "给手机、露营灯和车载设备临时补能。"),
