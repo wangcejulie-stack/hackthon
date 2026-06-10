@@ -2222,6 +2222,30 @@ function openShopSearchFromUrl() {
   if (status) status.textContent = "AI 已生成 1 套结构化商品方案";
 }
 
+function openProfileSpaceFromUrl() {
+  if (typeof window === "undefined") return;
+
+  const params = new URLSearchParams(window.location.search);
+  const space = params.get("space");
+  if (!space) return;
+
+  activateView("profile");
+  document
+    .querySelectorAll("[data-space-tab]")
+    .forEach((button) => button.classList.toggle("active", button.dataset.spaceTab === space));
+  document
+    .querySelectorAll("[data-space-panel]")
+    .forEach((panel) => panel.classList.toggle("active", panel.dataset.spacePanel === space));
+
+  if (space !== "car") return;
+
+  const carScenario = params.get("carScenario") ?? "camping";
+  document.querySelectorAll("[data-car-space-scenario]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.carSpaceScenario === carScenario);
+  });
+  renderCarSpaceScenario(carScenario);
+}
+
 function init() {
   bindAccessGate();
   renderFeed();
@@ -2237,6 +2261,7 @@ function init() {
   bindProfileDashboard();
   openSemanticSearchFromUrl();
   openShopSearchFromUrl();
+  openProfileSpaceFromUrl();
   openImmersiveSceneFromUrl();
 }
 

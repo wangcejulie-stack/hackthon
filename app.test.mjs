@@ -405,6 +405,16 @@ test("car space acts as an AI travel scenario decision board", () => {
   assert.match(styles, /\.car-decision-actions/);
 });
 
+test("car space supports direct URL entry into a scenario", () => {
+  const script = readFileSync(resolve(here, "script.js"), "utf8");
+
+  assert.match(script, /function openProfileSpaceFromUrl\(\)/);
+  assert.match(script, /params\.get\("space"\)/);
+  assert.match(script, /params\.get\("carScenario"\)/);
+  assert.match(script, /renderCarSpaceScenario\(carScenario\)/);
+  assert.match(script, /openProfileSpaceFromUrl\(\)/);
+});
+
 test("car space image hotspots do not show persistent text over the image", () => {
   const styles = readFileSync(resolve(here, "styles.css"), "utf8");
 
