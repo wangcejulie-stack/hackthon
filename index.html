@@ -22,6 +22,56 @@
       </form>
     </section>
 
+    <script>
+      (() => {
+        const password = "lifeos-demo";
+        const sessionKey = "lifeos-access-granted";
+        const form = document.querySelector("#accessForm");
+        const input = document.querySelector("#accessPassword");
+        const error = document.querySelector("#accessError");
+        const unlock = () => document.body.classList.remove("auth-locked");
+        const hasSession = () => {
+          try {
+            return window.sessionStorage.getItem(sessionKey) === "1";
+          } catch {
+            return false;
+          }
+        };
+        const remember = () => {
+          try {
+            window.sessionStorage.setItem(sessionKey, "1");
+          } catch {
+            // Restricted preview storage should not block access after a correct password.
+          }
+        };
+
+        if (!form || !input) {
+          unlock();
+          return;
+        }
+
+        window.__lifeosAccessGateBound = true;
+
+        if (hasSession()) {
+          unlock();
+          return;
+        }
+
+        input.focus();
+        form.addEventListener("submit", (event) => {
+          event.preventDefault();
+          if (String(input.value || "").trim() === password) {
+            remember();
+            unlock();
+            return;
+          }
+
+          if (error) error.textContent = "密码不正确，请再试一次。";
+          input.select();
+        });
+      })();
+    </script>
+
     <main class="app-shell">
       <aside class="rail" aria-label="产品导航">
         <div class="brand">

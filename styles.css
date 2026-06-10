@@ -551,6 +551,23 @@ h2 {
   box-shadow: 0 0 0 3px rgba(255, 149, 41, 0.14);
 }
 
+.creator-generated-avatar {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255, 250, 239, 0.42);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 28%, rgba(255, 250, 239, 0.38), transparent 34%),
+    linear-gradient(135deg, var(--gold), var(--copper));
+  color: #1b160c;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 0 0 3px rgba(255, 149, 41, 0.14);
+}
+
 .feed-label {
   position: absolute;
   z-index: 2;
