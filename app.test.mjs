@@ -21,7 +21,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 test("demo covers the four required lifestyle scenes", () => {
   assert.deepEqual(
     demoScenes.map((scene) => scene.type),
-    ["露营餐具", "桌搭", "EDC", "RoomTour"],
+    ["露营餐具", "桌搭", "EDC", "车空间"],
   );
 });
 
@@ -63,9 +63,24 @@ test("feed uses the uploaded 王策 avatar image", () => {
 
 test("homepage scene images use local Feishu document assets", () => {
   for (const scene of demoScenes) {
-    assert.match(scene.image, /^\.\/assets\/(?:scene-(desk|edc|room)|做饭)\.png$/);
+    assert.match(scene.image, /^\.\/assets\/(?:scene-(desk|edc)|做饭)\.png$|^\.\/assets\/社区页面车图片\.jpeg$/);
     assert.equal(existsSync(resolve(here, scene.image)), true);
   }
+});
+
+test("fourth community card uses the local car interior image and matching copy", () => {
+  const carInteriorScene = demoScenes[3];
+  const script = readFileSync(resolve(here, "script.js"), "utf8");
+
+  assert.equal(carInteriorScene.image, "./assets/社区页面车图片.jpeg");
+  assert.equal(existsSync(resolve(here, "assets/社区页面车图片.jpeg")), true);
+  assert.equal(carInteriorScene.type, "车空间");
+  assert.equal(carInteriorScene.scenario, "日常通勤");
+  assert.equal(carInteriorScene.title, "我的通勤车内小宇宙");
+  assert.deepEqual(carInteriorScene.tags, ["车内收纳", "通勤舒适", "氛围感"]);
+  assert.deepEqual(carInteriorScene.products, ["车内手机支架", "车载香氛", "车载纸巾盒", "车载水杯"]);
+  assert.match(script, /方向盘套让驾驶触感更稳定/);
+  assert.match(script, /手机支架、香薰和纸巾盒这些高频物件/);
 });
 
 test("first feed scene uses the requested camping tableware note image", () => {
